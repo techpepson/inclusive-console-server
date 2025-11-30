@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Hero {
+  id                   String   @id @default(cuid())
+  mainTitle            String   @default("AI-Powered Advocacy for Inclusive Ghana")
+  subTitle             String   @default("Leveraging social media analytics to drive awareness and action for persons with disabilities, VAW prevention, mental health, and LGBTQ+ rights in Ghana.")
+  primaryButtonText    String   @default("Explore Analytics")
+  secoondaryButtonText String   @default("Join Community")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model Statistic {
+  id        String   @id @default(cuid())
+  label     String
+  value     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ImpactMetric {
+  id        String   @id @default(cuid())
+  label     String
+  growth    String?
+  value     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FocusAreas {
+  id          String   @id @default(cuid())
+  label       String
+  image       String
+  hashTags    String[]
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Preferences {
+  id                String   @id @default(cuid())
+  receiveNewsletter Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
