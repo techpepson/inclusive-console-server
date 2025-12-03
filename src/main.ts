@@ -11,6 +11,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'https://inclusive-console.sbuildsolutions.org',
+      'https://inclusive.sbuildsolutions.org/',
       'http://localhost:3000',
       'http://localhost:5174',
       'http://localhost:5173',
