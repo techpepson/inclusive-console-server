@@ -11,7 +11,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'https://inclusive-console.sbuildsolutions.org',
-      'https://inclusive.sbuildsolutions.org/',
+      'https://inclusive.sbuildsolutions.org',
       'http://localhost:3000',
       'http://localhost:5174',
       'http://localhost:5173',
@@ -26,8 +26,9 @@ async function bootstrap() {
       'Access-Control-Allow-Origin',
     ],
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-    credentials: true,
+    credentials: false,
   });
   await app.listen(process.env.PORT ?? 3000);
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();
