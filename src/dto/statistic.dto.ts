@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class ImpactMetricDto {
+export class StatisticDto {
   @IsString()
   @IsNotEmpty()
   label: string;
@@ -11,9 +11,9 @@ export class ImpactMetricDto {
   value: string;
 }
 
-export class CreateImpactMetricsDto {
+export class CreateStatisticsDto {
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => ImpactMetricDto)
-  metrics: ImpactMetricDto[];
+  @Type(() => StatisticDto)
+  statistics: StatisticDto[];
 }

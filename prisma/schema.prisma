@@ -13,41 +13,131 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  name          String
+  password      String
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  heroes        Hero[]
+  statistics    Statistic[]
+  role          Role           @default(USER)
+  impactMetrics ImpactMetric[]
+}
+
 model Hero {
-  id                   String   @id @default(cuid())
-  mainTitle            String   @default("AI-Powered Advocacy for Inclusive Ghana")
-  subTitle             String   @default("Leveraging social media analytics to drive awareness and action for persons with disabilities, VAW prevention, mental health, and LGBTQ+ rights in Ghana.")
-  primaryButtonText    String   @default("Explore Analytics")
-  secoondaryButtonText String   @default("Join Community")
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
+  id                  String   @id @default(cuid())
+  heading             String
+  subTitle            String   @map("subtitle")
+  primaryButtonText   String   @map("primary_button_text")
+  secondaryButtonText String   @map("secondary_button_text")
+  createdAt           DateTime @default(now()) @map("created_at")
+  createdBy           User     @relation(fields: [createdById], references: [id])
+  createdById         String   @map("created_by")
+  updatedAt           DateTime @updatedAt @map("updated_at")
 }
 
 model Statistic {
-  id        String   @id @default(cuid())
-  label     String
-  value     Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  label       String
+  value       String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById String   @map("created_by_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 }
 
 model ImpactMetric {
-  id        String   @id @default(cuid())
-  label     String
-  growth    String?
-  value     Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  label       String
+  value       String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById String   @map("created_by_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 }
 
 model FocusAreas {
-  id          String   @id @default(cuid())
-  label       String
-  image       String
-  hashTags    String[]
+  id                      String                   @id @default(cuid())
+  title                   String
+  images                  String[]
+  hashTag                 String
+  description             String
+  statsLabel              String                   @map("stats_label")
+  statsValue              String                   @map("stats_value")
+  keyVoices               KeyVoice[]
+  supportingOrganizations SupportingOrganization[]
+  createdAt               DateTime                 @default(now()) @map("created_at")
+  updatedAt               DateTime                 @updatedAt @map("updated_at")
+  inspiringStories        InspiringStories[]
+}
+
+model InspiringStories {
+  id          String     @id @default(cuid())
+  speaker     String
+  story       String
+  focusArea   FocusAreas @relation(fields: [focusAreaId], references: [id], onDelete: Cascade)
+  focusAreaId String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model KeyVoice {
+  id          String     @id @default(cuid())
+  name        String
   description String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  followers   Int?
+  focusArea   FocusAreas @relation(fields: [focusAreaId], references: [id], onDelete: Cascade)
+  focusAreaId String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model SupportingOrganization {
+  id          String     @id @default(cuid())
+  name        String
+  description String
+  email       String
+  website     String?
+  focusArea   FocusAreas @relation(fields: [focusAreaId], references: [id], onDelete: Cascade)
+  focusAreaId String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model About {
+  id                 String       @id @default(cuid())
+  description        String
+  missionDescription String       @map("mission_description")
+  visionDescription  String       @map("vision_description")
+  teamMembers        TeamMember[]
+  sponsors           Sponsor[]
+  createdAt          DateTime     @default(now()) @map("created_at")
+  updatedAt          DateTime     @updatedAt @map("updated_at")
+}
+
+model TeamMember {
+  id             String   @id @default(cuid())
+  name           String
+  role           String
+  description    String
+  profilePicture String?  @map("profile_picture")
+  about          About?   @relation(fields: [aboutId], references: [id], onDelete: SetNull)
+  aboutId        String?  @map("about_id")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+}
+
+model Sponsor {
+  id          String   @id @default(cuid())
+  name        String
+  website     String?
+  description String?
+  about       About?   @relation(fields: [aboutId], references: [id], onDelete: SetNull)
+  aboutId     String?  @map("about_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 }
 
 model Preferences {
@@ -61,7 +151,33 @@ model ContactMessage {
   id        String   @id @default(cuid())
   name      String
   email     String
+  subject   String
   message   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Events {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  date        DateTime
+  location    String
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  speaker   String
+  role      String
+  statement String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+enum Role {
+  USER
+  ADMIN
+  ADMIN_USER
 }
