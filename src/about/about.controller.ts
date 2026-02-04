@@ -39,7 +39,7 @@ export class AboutController {
   constructor(private readonly aboutService: AboutService) {}
 
   // Complete About Data Endpoint (Unified)
-  @Put()
+  @Patch()
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FilesInterceptor('profilePictures', 50))
   @HttpCode(HttpStatus.OK)

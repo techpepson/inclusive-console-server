@@ -63,7 +63,7 @@ export class AboutService {
     // With this:
     if (
       (dto.teamMembers && dto.teamMembers.length > 0) ||
-      dto.clearTeamMembers === 'true'
+      dto.clearTeamMembers === true
     ) {
       await this.prisma.teamMember.deleteMany({
         where: { aboutId: about.id },
@@ -71,7 +71,7 @@ export class AboutService {
     }
     if (
       (dto.sponsors && dto.sponsors.length > 0) ||
-      dto.clearSponsors === 'true'
+      dto.clearSponsors === true
     ) {
       await this.prisma.sponsor.deleteMany({
         where: { aboutId: about.id },

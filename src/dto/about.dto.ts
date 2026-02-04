@@ -4,8 +4,9 @@ import {
   IsString,
   IsArray,
   ValidateNested,
+  IsBoolean,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 
 export class AboutDto {
   @IsString()
@@ -85,11 +86,21 @@ export class CompleteAboutDto {
   @IsOptional()
   sponsors?: SponsorDto[];
 
-  @IsString()
   @IsOptional()
-  clearTeamMembers?: string;
+  @IsBoolean()
+  @Transform(({ value }) => {
+    if (typeof value === 'boolean') return value;
+    if (typeof value === 'string') return value.toLowerCase() === 'true';
+    return false;
+  })
+  clearTeamMembers?: boolean;
 
-  @IsString()
   @IsOptional()
-  clearSponsors?: string;
+  @IsBoolean()
+  @Transform(({ value }) => {
+    if (typeof value === 'boolean') return value;
+    if (typeof value === 'string') return value.toLowerCase() === 'true';
+    return false;
+  })
+  clearSponsors?: boolean;
 }
