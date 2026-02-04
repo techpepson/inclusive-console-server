@@ -84,4 +84,12 @@ export class CompleteAboutDto {
   @Type(() => SponsorDto)
   @IsOptional()
   sponsors?: SponsorDto[];
+
+  @IsString()
+  @IsOptional()
+  clearTeamMembers?: string;
+
+  @IsString()
+  @IsOptional()
+  clearSponsors?: string;
 }

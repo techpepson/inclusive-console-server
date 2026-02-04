@@ -24,7 +24,6 @@ export class AuthController {
   }
 
   @Post('register')
-  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() payload: AuthDto, @Query('pse') secret: string) {
     return this.authService.register(payload, secret);

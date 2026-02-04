@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Patch,
   Post,
   Put,
   Query,
@@ -91,7 +92,7 @@ export class AboutController {
     );
   }
 
-  @Put('team')
+  @Patch('team')
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('profilePicture'))
   @HttpCode(HttpStatus.OK)

@@ -60,13 +60,19 @@ export class AboutService {
       });
     }
 
-    // Clear existing relations before creating new ones
-    if (dto.teamMembers && dto.teamMembers.length > 0) {
+    // With this:
+    if (
+      (dto.teamMembers && dto.teamMembers.length > 0) ||
+      dto.clearTeamMembers === 'true'
+    ) {
       await this.prisma.teamMember.deleteMany({
         where: { aboutId: about.id },
       });
     }
-    if (dto.sponsors && dto.sponsors.length > 0) {
+    if (
+      (dto.sponsors && dto.sponsors.length > 0) ||
+      dto.clearSponsors === 'true'
+    ) {
       await this.prisma.sponsor.deleteMany({
         where: { aboutId: about.id },
       });
