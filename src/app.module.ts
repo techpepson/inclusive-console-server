@@ -1,11 +1,12 @@
+import { ThemesModule } from './themes/themes.module';
+import { ThemesController } from './themes/themes.controller';
 import { EventsModule } from './events/events.module';
 import { AboutModule } from './about/about.module';
 import { HelpersModule } from './helpers/helpers.module';
 import { HelpersService } from './helpers/helpers.service';
 import { ContactModule } from './contact/contact.module';
-import { ContactController } from './contact/contact.controller';
-import { ContactService } from './contact/contact.service';
 import { AuthModule } from './auth/auth.module';
+import { SocialsModule } from './socials/socials.module';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -23,6 +24,7 @@ import appConfig from './config/app.config';
 
 @Module({
   imports: [
+    ThemesModule,
     EventsModule,
     AboutModule,
     TestimonialsModule,
@@ -34,11 +36,12 @@ import appConfig from './config/app.config';
       storage: memoryStorage(),
     }),
     ContactModule,
+    SocialsModule,
     AuthModule,
     HeroModule,
     StatisticsModule,
   ],
-  controllers: [ContactController, AppController],
-  providers: [HelpersService, ContactService, AppService, PrismaService],
+  controllers: [ThemesController, AppController],
+  providers: [HelpersService, AppService, PrismaService],
 })
 export class AppModule {}

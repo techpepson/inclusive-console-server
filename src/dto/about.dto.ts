@@ -5,6 +5,8 @@ import {
   IsArray,
   ValidateNested,
   IsBoolean,
+  IsInt,
+  Min,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 
@@ -25,32 +27,64 @@ export class AboutDto {
 export class TeamMemberDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
 
   @IsString()
   @IsNotEmpty()
-  role: string;
+  role!: string;
 
   @IsString()
   @IsNotEmpty()
-  description: string;
+  description!: string;
 
   @IsString()
   @IsOptional()
   profilePicture?: string;
 }
 
+export class TeamMemberUpsertDto {
+  @IsString()
+  @IsOptional()
+  id?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  name!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  role!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  description!: string;
+
+  @IsString()
+  @IsOptional()
+  profilePicture?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  profilePictureUploadIndex?: number;
+}
+
 export class CreateTeamMembersDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => TeamMemberDto)
-  teamMembers: TeamMemberDto[];
+  teamMembers!: TeamMemberDto[];
 }
 
 export class SponsorDto {
   @IsString()
+  @IsOptional()
+  id?: string;
+
+  @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
 
   @IsString()
   @IsOptional()
@@ -65,7 +99,7 @@ export class CreateSponsorsDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => SponsorDto)
-  sponsors: SponsorDto[];
+  sponsors!: SponsorDto[];
 }
 
 export class CompleteAboutDto {
@@ -76,15 +110,25 @@ export class CompleteAboutDto {
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => TeamMemberDto)
+  @Type(() => TeamMemberUpsertDto)
   @IsOptional()
-  teamMembers?: TeamMemberDto[];
+  teamMembers?: TeamMemberUpsertDto[];
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => SponsorDto)
   @IsOptional()
   sponsors?: SponsorDto[];
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  deleteTeamMemberIds?: string[];
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  deleteSponsorIds?: string[];
 
   @IsOptional()
   @IsBoolean()

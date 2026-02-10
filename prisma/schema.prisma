@@ -26,6 +26,14 @@ model User {
   impactMetrics ImpactMetric[]
 }
 
+model Socials {
+  id        String   @id @default(cuid())
+  platform  String
+  url       String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
 model Hero {
   id                  String   @id @default(cuid())
   heading             String
@@ -151,7 +159,8 @@ model ContactMessage {
   id        String   @id @default(cuid())
   name      String
   email     String
-  subject   String
+  subject   String?
+  phone     String?
   message   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

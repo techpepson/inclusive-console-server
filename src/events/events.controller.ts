@@ -5,8 +5,8 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Patch,
   Post,
-  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -36,14 +36,14 @@ export class EventsController {
     return this.eventService.createMultipleEvents(dto.events);
   }
 
-  @Put()
+  @Patch('update')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
   async updateEvent(@Query('id') id: string, @Body() dto: EventDto) {
     return this.eventService.updateEvent(id, dto);
   }
 
-  @Delete()
+  @Delete('event')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
   async deleteEvent(@Query('id') id: string) {
