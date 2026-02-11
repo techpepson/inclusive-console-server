@@ -13,7 +13,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { AuthGuard } from '@nestjs/passport';
 import { FocusService } from './focus.service';
 import { FocusDto } from '../dto/focus.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -44,7 +43,7 @@ export class FocusController {
   }
 
   @Patch('update')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FilesInterceptor('images', 10))
   @HttpCode(HttpStatus.OK)
   async updateFocusArea(

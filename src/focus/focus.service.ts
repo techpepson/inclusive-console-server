@@ -123,6 +123,12 @@ export class FocusService {
     dto: FocusDto,
     images?: Express.Multer.File[],
   ) {
+    if (!dto?.title || !dto?.description || !dto?.hashTag) {
+      throw new BadRequestException(
+        'Title, description, and hashTag are required',
+      );
+    }
+
     const existing = await this.prisma.focusAreas.findUnique({
       where: { id },
       select: { id: true, images: true },
@@ -142,56 +148,62 @@ export class FocusService {
       imageUrls = uploadedImages.map((img) => img.publicUrl || '');
     }
 
-    await this.prisma.keyVoice.deleteMany({ where: { focusAreaId: id } });
-    await this.prisma.inspiringStories.deleteMany({
-      where: { focusAreaId: id },
-    });
-    await this.prisma.supportingOrganization.deleteMany({
-      where: { focusAreaId: id },
-    });
+    return this.prisma.$transaction(async (tx) => {
+      if (dto.keyVoices) {
+        await tx.keyVoice.deleteMany({ where: { focusAreaId: id } });
+      }
+      if (dto.inspiringStories) {
+        await tx.inspiringStories.deleteMany({ where: { focusAreaId: id } });
+      }
+      if (dto.supportingOrganizations) {
+        await tx.supportingOrganization.deleteMany({
+          where: { focusAreaId: id },
+        });
+      }
 
-    return this.prisma.focusAreas.update({
-      where: { id },
-      data: {
-        title: dto.title,
-        description: dto.description,
-        hashTag: dto.hashTag,
-        images: imageUrls,
-        statsLabel: dto.statsLabel || '',
-        statsValue: dto.statsValue || '',
-        keyVoices: dto.keyVoices
-          ? {
-              create: dto.keyVoices.map((kv) => ({
-                name: kv.name,
-                description: kv.description,
-                followers: kv.followers,
-              })),
-            }
-          : undefined,
-        inspiringStories: dto.inspiringStories
-          ? {
-              create: dto.inspiringStories.map((story) => ({
-                speaker: story.speaker,
-                story: story.story,
-              })),
-            }
-          : undefined,
-        supportingOrganizations: dto.supportingOrganizations
-          ? {
-              create: dto.supportingOrganizations.map((org) => ({
-                name: org.name,
-                description: org.description,
-                email: org.email,
-                website: org.website,
-              })),
-            }
-          : undefined,
-      },
-      include: {
-        keyVoices: true,
-        inspiringStories: true,
-        supportingOrganizations: true,
-      },
+      return tx.focusAreas.update({
+        where: { id },
+        data: {
+          title: dto.title,
+          description: dto.description,
+          hashTag: dto.hashTag,
+          images: imageUrls,
+          statsLabel: dto.statsLabel || '',
+          statsValue: dto.statsValue || '',
+          keyVoices: dto.keyVoices
+            ? {
+                create: dto.keyVoices.map((kv) => ({
+                  name: kv.name,
+                  description: kv.description,
+                  followers: kv.followers,
+                })),
+              }
+            : undefined,
+          inspiringStories: dto.inspiringStories
+            ? {
+                create: dto.inspiringStories.map((story) => ({
+                  speaker: story.speaker,
+                  story: story.story,
+                })),
+              }
+            : undefined,
+          supportingOrganizations: dto.supportingOrganizations
+            ? {
+                create: dto.supportingOrganizations.map((org) => ({
+                  name: org.name,
+                  description: org.description,
+                  email: org.email,
+                  website: org.website,
+                })),
+              }
+            : undefined,
+        },
+        include: {
+          keyVoices: true,
+          inspiringStories: true,
+          supportingOrganizations: true,
+        },
+      });
     });
   }
 

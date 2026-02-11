@@ -1,4 +1,4 @@
-import { Transform, Type } from 'class-transformer';
+import { plainToInstance, Transform, Type } from 'class-transformer';
 import {
   IsNotEmpty,
   IsString,
@@ -78,12 +78,16 @@ export class FocusDto {
     if (typeof value === 'string') {
       try {
         const parsed = JSON.parse(value);
-        return Array.isArray(parsed) ? parsed : undefined;
+        return Array.isArray(parsed)
+          ? plainToInstance(InspiringStoryDto, parsed)
+          : undefined;
       } catch {
         return undefined;
       }
     }
-    return value;
+    return Array.isArray(value)
+      ? plainToInstance(InspiringStoryDto, value)
+      : value;
   })
   @ValidateNested({ each: true })
   @Type(() => InspiringStoryDto)
@@ -97,7 +101,7 @@ export class FocusDto {
       try {
         const parsed = JSON.parse(value);
         if (!Array.isArray(parsed)) return undefined;
-        return parsed.map((kv: any) => ({
+        const normalized = parsed.map((kv: any) => ({
           ...kv,
           followers:
             kv?.followers !== undefined &&
@@ -106,21 +110,22 @@ export class FocusDto {
               ? Number(kv.followers)
               : undefined,
         }));
+        return plainToInstance(KeyVoiceDto, normalized);
       } catch {
         return undefined;
       }
     }
-    return Array.isArray(value)
-      ? value.map((kv: any) => ({
-          ...kv,
-          followers:
-            kv?.followers !== undefined &&
-            kv?.followers !== null &&
-            kv?.followers !== ''
-              ? Number(kv.followers)
-              : undefined,
-        }))
-      : value;
+    if (!Array.isArray(value)) return value;
+    const normalized = value.map((kv: any) => ({
+      ...kv,
+      followers:
+        kv?.followers !== undefined &&
+        kv?.followers !== null &&
+        kv?.followers !== ''
+          ? Number(kv.followers)
+          : undefined,
+    }));
+    return plainToInstance(KeyVoiceDto, normalized);
   })
   @ValidateNested({ each: true })
   @Type(() => KeyVoiceDto)
@@ -133,12 +138,16 @@ export class FocusDto {
     if (typeof value === 'string') {
       try {
         const parsed = JSON.parse(value);
-        return Array.isArray(parsed) ? parsed : undefined;
+        return Array.isArray(parsed)
+          ? plainToInstance(SupportingOrganizationDto, parsed)
+          : undefined;
       } catch {
         return undefined;
       }
     }
-    return value;
+    return Array.isArray(value)
+      ? plainToInstance(SupportingOrganizationDto, value)
+      : value;
   })
   @ValidateNested({ each: true })
   @Type(() => SupportingOrganizationDto)
