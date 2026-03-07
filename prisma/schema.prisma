@@ -172,6 +172,7 @@ model Events {
   description String
   date        DateTime
   location    String
+  images      String[]
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 }

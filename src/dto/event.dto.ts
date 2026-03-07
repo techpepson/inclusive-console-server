@@ -3,6 +3,7 @@ import {
   IsString,
   IsDateString,
   IsArray,
+  IsOptional,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -23,6 +24,11 @@ export class EventDto {
   @IsString()
   @IsNotEmpty()
   location: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  images?: string[];
 }
 
 export class CreateEventsDto {

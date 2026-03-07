@@ -8,8 +8,11 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 import { EventService } from './events.service';
 import { EventDto, CreateEventsDto } from '../dto/event.dto';
@@ -29,6 +32,17 @@ export class EventsController {
     return this.eventService.getEventById(id);
   }
 
+  @Post('create')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FilesInterceptor('images', 10))
+  @HttpCode(HttpStatus.CREATED)
+  async createEvent(
+    @Body() dto: EventDto,
+    @UploadedFiles() images?: Express.Multer.File[],
+  ) {
+    return this.eventService.createEvent(dto, images);
+  }
+
   @Post('bulk')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
@@ -38,9 +52,14 @@ export class EventsController {
 
   @Patch('update')
   @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(FilesInterceptor('images', 10))
   @HttpCode(HttpStatus.OK)
-  async updateEvent(@Query('id') id: string, @Body() dto: EventDto) {
-    return this.eventService.updateEvent(id, dto);
+  async updateEvent(
+    @Query('id') id: string,
+    @Body() dto: EventDto,
+    @UploadedFiles() images?: Express.Multer.File[],
+  ) {
+    return this.eventService.updateEvent(id, dto, images);
   }
 
   @Delete('event')
