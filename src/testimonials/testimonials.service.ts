@@ -22,12 +22,40 @@ export class TestimonialsService {
         speaker: dto.speaker,
         role: dto.role,
         statement: dto.statement,
+        approved: true, // admin created is auto-approved
       },
       select: {
         id: true,
         speaker: true,
         role: true,
         statement: true,
+        approved: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
+
+  async submitTestimonial(dto: TestimonialDto) {
+    if (!dto?.speaker || !dto?.role || !dto?.statement) {
+      throw new BadRequestException(
+        'Speaker, role, and statement are required',
+      );
+    }
+
+    return this.prisma.testimonial.create({
+      data: {
+        speaker: dto.speaker,
+        role: dto.role,
+        statement: dto.statement,
+        approved: false, // user submitted is pending
+      },
+      select: {
+        id: true,
+        speaker: true,
+        role: true,
+        statement: true,
+        approved: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -55,6 +83,7 @@ export class TestimonialsService {
         speaker: testimonial.speaker,
         role: testimonial.role,
         statement: testimonial.statement,
+        approved: true, // bulk upload is auto-approved (admin)
       };
     });
 
@@ -70,12 +99,29 @@ export class TestimonialsService {
 
   async getAllTestimonials() {
     return this.prisma.testimonial.findMany({
+      where: { approved: true },
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,
         speaker: true,
         role: true,
         statement: true,
+        approved: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
+
+  async getAllTestimonialsAdmin() {
+    return this.prisma.testimonial.findMany({
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        speaker: true,
+        role: true,
+        statement: true,
+        approved: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -90,6 +136,7 @@ export class TestimonialsService {
         speaker: true,
         role: true,
         statement: true,
+        approved: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -129,6 +176,33 @@ export class TestimonialsService {
         speaker: true,
         role: true,
         statement: true,
+        approved: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
+
+  async approveTestimonial(id: string) {
+    const testimonial = await this.prisma.testimonial.findUnique({
+      where: { id },
+    });
+
+    if (!testimonial) {
+      throw new NotFoundException(`Testimonial with id ${id} not found`);
+    }
+
+    return this.prisma.testimonial.update({
+      where: { id },
+      data: {
+        approved: true,
+      },
+      select: {
+        id: true,
+        speaker: true,
+        role: true,
+        statement: true,
+        approved: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -151,6 +225,7 @@ export class TestimonialsService {
         speaker: true,
         role: true,
         statement: true,
+        approved: true,
       },
     });
   }

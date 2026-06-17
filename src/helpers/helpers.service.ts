@@ -73,6 +73,49 @@ export class HelpersService {
     return results;
   }
 
+  async uploadFile(
+    file: Express.Multer.File,
+    firstName: string,
+    mediaType: string,
+  ) {
+    if (!file) {
+      return {
+        path: null,
+        publicUrl: null,
+      };
+    }
+
+    const fileExt = file.originalname.split('.').pop();
+    const timestamp = Date.now();
+    const rand = Math.random().toString(36).slice(2, 8);
+    const sanitizedPrefix = firstName.replace(/[^a-zA-Z0-9]/g, '-');
+    const fileName = `${sanitizedPrefix}-${mediaType}-${timestamp}-${rand}.${fileExt}`;
+    const filePath = `resources/${fileName}`;
+
+    const { data, error } = await supabase.storage
+      .from(this.bucketName)
+      .upload(filePath, file.buffer, {
+        contentType: file.mimetype ?? 'application/octet-stream',
+        upsert: false,
+      });
+
+    if (error) {
+      throw new PreconditionFailedException(
+        'Upload of file failed',
+        error.message,
+      );
+    }
+
+    const { data: publicData } = supabase.storage
+      .from(this.bucketName)
+      .getPublicUrl(filePath);
+
+    return {
+      path: data.path,
+      publicUrl: publicData.publicUrl,
+    };
+  }
+
   async checkUser(email: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: { email },

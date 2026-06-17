@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Patch,
   Post,
   Put,
   Query,
@@ -23,6 +24,12 @@ export class TestimonialsController {
     return this.testimonialsService.getAllTestimonials();
   }
 
+  @Get('all-admin')
+  @UseGuards(JwtAuthGuard)
+  async getAllTestimonialsAdmin() {
+    return this.testimonialsService.getAllTestimonialsAdmin();
+  }
+
   @Get('single')
   async getTestimonialById(@Query('id') id: string) {
     return this.testimonialsService.getTestimonialById(id);
@@ -33,6 +40,12 @@ export class TestimonialsController {
   @HttpCode(HttpStatus.CREATED)
   async createTestimonial(@Body() dto: TestimonialDto) {
     return this.testimonialsService.createTestimonial(dto);
+  }
+
+  @Post('submit')
+  @HttpCode(HttpStatus.CREATED)
+  async submitTestimonial(@Body() dto: TestimonialDto) {
+    return this.testimonialsService.submitTestimonial(dto);
   }
 
   @Post('bulk')
@@ -52,6 +65,13 @@ export class TestimonialsController {
     @Body() dto: TestimonialDto,
   ) {
     return this.testimonialsService.updateTestimonial(id, dto);
+  }
+
+  @Patch('approve')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async approveTestimonial(@Query('id') id: string) {
+    return this.testimonialsService.approveTestimonial(id);
   }
 
   @Delete('delete')

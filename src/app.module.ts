@@ -15,6 +15,7 @@ import { StatisticsModule } from './statistics/statistics.module';
 import { MetricsModule } from './metrics/metrics.module';
 import { FocusModule } from './focus/focus.module';
 import { TestimonialsModule } from './testimonials/testimonials.module';
+import { ResourcesModule } from './resources/resources.module';
 
 import { PrismaService } from './prisma/prisma.service';
 import { MulterModule } from '@nestjs/platform-express';
@@ -28,6 +29,7 @@ import appConfig from './config/app.config';
     EventsModule,
     AboutModule,
     TestimonialsModule,
+    ResourcesModule,
     FocusModule,
     MetricsModule,
     HelpersModule,
